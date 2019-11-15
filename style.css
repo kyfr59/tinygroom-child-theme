@@ -128,3 +128,10 @@
     transform: rotate(360deg);
   }
 }
+
+/* Decrease space between header and content */
+@media (max-width:  768px) {
+  #masthead {
+    margin-bottom:40px !important;
+  }
+}
