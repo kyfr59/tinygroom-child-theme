@@ -34,23 +34,9 @@
 
 		<div class="site-info">
 			<div class="container">
-				<?php
-				siteorigin_unwind_footer_text();
-
-				if ( function_exists( 'the_privacy_policy_link' ) && siteorigin_setting( 'footer_privacy_policy_link' ) ) {
-					the_privacy_policy_link( '<span>', '</span>' );
-				}
-
-				$credit_text = apply_filters(
-					'siteorigin_unwind_footer_credits',
-					'<span>' . sprintf( esc_html__( 'Crafted with love by %s', 'siteorigin-unwind' ), '<a href="https://siteorigin.com/">SiteOrigin</a>' ) . '</span>'
-				);
-
-				if ( ! empty( $credit_text ) ) {
-					echo wp_kses_post( $credit_text );
-				}
-				?>
+				<?php siteorigin_unwind_footer_text(); ?>
 			</div><!-- .container -->
+
 		</div><!-- .site-info -->
 	</footer><!-- #colophon -->
 </div><!-- #page -->
