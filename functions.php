@@ -25,15 +25,17 @@ function theme_enqueue_backend_styles()
 add_action('gform_entry_detail_sidebar_after', 'tinygroom_add_send_letter_button_in_admin', 10, 2);
 function tinygroom_add_send_letter_button_in_admin($form, $lead)
 {
-  if ( $form['id'] == 1 ) {
+  if ( $form['id'] == 1 || $form['id'] == 24 ) {
     $link = '<a download href="../admin937597_php/letter.php?id='.$lead['id'].'" class="button">Télécharger la lettre</a>';
     $file = "letter";
     $text = "la lettre";
-  } elseif ( $form['id'] == 18 ) {
+  } elseif ( $form['id'] == 18 || $form['id'] == 25 ) {
     $file = "cerfa_ecj";
     $text = "le CERFA";
   }
-  echo '<div class="detail-view-print"><a download href="../admin937597_php/'.$file.'.php?id='.$lead['id'].'" class="button">Télécharger '.$text.'</a></div>';
+  if (strlen(trim($text))) {
+    echo '<div class="detail-view-print"><a download href="../admin937597_php/'.$file.'.php?id='.$lead['id'].'" class="button">Télécharger '.$text.'</a></div>';
+  }
 }
 
 
