@@ -5,7 +5,7 @@
 
 // Add CSS & JS to frontend
 add_action('wp_enqueue_scripts', 'theme_enqueue_frontend_styles');
-function theme_enqueue_front_styles()
+function theme_enqueue_frontend_styles()
 {
     wp_enqueue_style('parent-style', get_template_directory_uri() . '/style.css');
     wp_enqueue_style('tinygroom', get_stylesheet_uri());

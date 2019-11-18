@@ -6,6 +6,4 @@ jQuery(document).ready(function ($) {
       formBanque.submit();
   }
 
-  $('td.field_id-84').die();
-
 });
