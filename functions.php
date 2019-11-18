@@ -29,7 +29,7 @@ function tinygroom_add_send_letter_button_in_admin($form, $lead)
     $link = '<a download href="../admin937597_php/letter.php?id='.$lead['id'].'" class="button">Télécharger la lettre</a>';
     $file = "letter";
     $text = "la lettre";
-  } elseif ( $form['id'] == 18 || $form['id'] == 25 ) {
+  } elseif ( $form['id'] == 18 || $form['id'] == 23 ) {
     $file = "cerfa_ecj";
     $text = "le CERFA";
   }
