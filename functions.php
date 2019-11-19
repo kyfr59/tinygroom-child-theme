@@ -18,6 +18,9 @@ add_action('admin_enqueue_scripts', 'theme_enqueue_backend_styles');
 function theme_enqueue_backend_styles()
 {
     wp_enqueue_script('tinygroom', get_stylesheet_directory_uri() . '/js/backend.js', array( 'jquery' ), false, true);
+
+    // pass Ajax Url to script.js
+    wp_localize_script('tinygroom', 'ajaxurl', admin_url( 'admin-ajax.php' ) );
 }
 
 
@@ -39,11 +42,56 @@ function tinygroom_add_send_letter_button_in_admin($form, $lead)
 }
 
 
-add_filter( 'gform_entry_list_columns', 'set_columns', 10, 2 );
-function set_columns( $table_columns, $form_id ){
+// Replace the status value by a combo and change the status via Ajax (see js/backend.js)
+add_filter( 'gform_get_field_value', 'enable_select_status_on_form_entries', 10, 3 );
+function enable_select_status_on_form_entries( $value, $entry, $field ){
 
-//array_splice( $table_columns, 1, 0, ['field_id-88884' => 'Statut'] );
+  if (!isset($_GET['lid']) && $field['type'] == 'select' && $field['adminLabel'] == 'Statut') {
+
+    // Build and display the combobox
+    $form     =  GFFormsModel::get_form_meta( $entry['form_id'] );
+    $fields   = $form['fields'];
+    $key      = array_search('Statut', array_column($fields, 'adminLabel'));
+    $choices  = $fields[$key]['choices'];
+
+    $selected[$value] = 'selected="selected"';
+    $select = '<select name="status" data-form_id="'.$entry['form_id'].'" data-entry_id="'.$entry['id'].'" data-field_id="'.$field['id'].'" >';
+    foreach($choices as $choice) {
+      $select .= '<option '.@$selected[$choice['value']].' value="'.$choice['value'].'">'.$choice['text'].'</option>';
+    }
+    $select .= '</select>';
+    $select .= '<img class="waiting-status" src="'.get_stylesheet_directory_uri().'/img/waiting.gif" style="position: absolute; padding-left: 2px; padding-top: 1px; display:none;" />';
+    $select .= '<i class="fa fa-check fa-lg" style="size:2px; position: absolute; padding-left: 4px; padding-top: 7px; color:green; opacity:.7; display:none;"></i>';
+
+    echo $select;
+    return;
+  }
+
+  return $value;
+}
 
 
-    return $table_columns;
+// Manage the Ajax call to change the status (see enable_select_status_on_form_entries() and js/backend.js)
+add_action( 'wp_ajax_change_form_entry_status', 'change_form_entry_status' );
+function change_form_entry_status() {
+
+  // Retrive values pass throught Ajax
+  $form_id  = $_POST['form_id'];
+  $entry_id = $_POST['entry_id'];
+  $field_id = $_POST['field_id'];
+  $value    = $_POST['value'];
+
+  // Get needed data to update the value in database
+  global $wpdb;
+  $form           = GFFormsModel::get_form_meta($form_id);
+  $entry          = GFFormsModel::get_lead($entry_id);
+  $field          = GFFormsModel::get_field($form, $field_id);
+  $entry_meta_table_name = GFFormsModel::get_entry_meta_table_name();
+  $sql                   = $wpdb->prepare("SELECT id FROM {$entry_meta_table_name} WHERE entry_id=%d AND meta_key = %s", $entry_id, $field_id);
+  $entry_meta_id         = $wpdb->get_var($sql);
+
+  // Update the value in database
+  GFFormsModel::update_entry_field_value( $form, $entry, $field, $entry_meta_id, $field_id, $value);
+
+  die();
 }
