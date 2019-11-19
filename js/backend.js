@@ -10,7 +10,8 @@ jQuery(document).ready(function ($) {
     // Get icons and show the waiter
     var waiting = $(this).next('img');
     var checked = $(this).nextAll('i.fa');
-    waiting.show();
+    checked.css('display', 'none');
+    waiting.css('display', 'inline-block');
 
     // Get needed values from the select tag
     var form_id   = $(this).data('form_id');
@@ -30,8 +31,8 @@ jQuery(document).ready(function ($) {
       },
       function(response){
         // Show the checked icon
-        waiting.hide();
-        checked.fadeIn(800);
+        waiting.css('display', 'none');
+        checked.fadeIn().css("display","inline-block");
         $(this).blur();
       }
     );
