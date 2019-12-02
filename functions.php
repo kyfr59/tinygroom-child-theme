@@ -92,6 +92,11 @@ function change_form_entry_status() {
 
   // Update the value in database
   GFFormsModel::update_entry_field_value( $form, $entry, $field, $entry_meta_id, $field_id, $value);
+}
 
-  die();
+
+//  Set most older year to 1885 in select boxes
+add_filter( 'gform_date_min_year', 'set_min_year' );
+function set_min_year( $min_year ) {
+    return 1885;
 }
