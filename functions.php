@@ -46,7 +46,7 @@ function tinygroom_add_send_letter_button_in_admin($form, $lead)
 add_filter( 'gform_get_field_value', 'enable_select_status_on_form_entries', 10, 3 );
 function enable_select_status_on_form_entries( $value, $entry, $field ){
 
-  if (!isset($_GET['lid']) && $field['type'] == 'select' && $field['adminLabel'] == 'Statut') {
+  if (!isset($_GET['lid']) && $_GET['page'] =='gf_entries' && $field['type'] == 'select' && $field['adminLabel'] == 'Statut') {
 
     // Build and display the combobox
     $form     =  GFFormsModel::get_form_meta( $entry['form_id'] );
