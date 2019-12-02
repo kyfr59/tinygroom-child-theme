@@ -46,7 +46,7 @@ function tinygroom_add_send_letter_button_in_admin($form, $lead)
 add_filter( 'gform_get_field_value', 'enable_select_status_on_form_entries', 10, 3 );
 function enable_select_status_on_form_entries( $value, $entry, $field ){
 
-  if (!isset($_GET['lid']) && $_GET['page'] =='gf_entries' && $field['type'] == 'select' && $field['adminLabel'] == 'Statut') {
+  if (!isset($_GET['lid']) && $_GET['page'] == 'gf_entries' && $field['type'] == 'select' && $field['adminLabel'] == 'Statut') {
 
     // Build and display the combobox
     $form     =  GFFormsModel::get_form_meta( $entry['form_id'] );
@@ -99,4 +99,33 @@ function change_form_entry_status() {
 add_filter( 'gform_date_min_year', 'set_min_year' );
 function set_min_year( $min_year ) {
     return 1885;
+}
+
+// Set the gender field required
+add_filter( 'gform_field_validation', 'tinygroom_set_gender_field_required', 10, 4);
+function tinygroom_set_gender_field_required ( $result, $value, $form, $field ) {
+
+  if ( $field->type == 'name' ) {
+
+    $prefix = rgar( $value, $field->id . '.2' );
+    $first  = rgar( $value, $field->id . '.3' );
+    $middle = rgar( $value, $field->id . '.4' );
+    $last   = rgar( $value, $field->id . '.6' );
+    $suffix = rgar( $value, $field->id . '.8' );
+
+    if ( empty( $prefix ) && ! $field->get_input_property( '2', 'isHidden' )
+      || empty( $first ) && ! $field->get_input_property( '3', 'isHidden' )
+      || empty( $middle ) && ! $field->get_input_property( '4', 'isHidden' )
+      || empty( $last ) && ! $field->get_input_property( '6', 'isHidden' )
+      || empty( $suffix ) && ! $field->get_input_property( '8', 'isHidden' )
+    ) {
+      $result['is_valid'] = false;
+      $result['message']  = empty( $field->errorMessage ) ? __( 'Ce champ est obligatoire, merci de le remplir.', 'gravityforms' ) : $field->errorMessage;
+    } else {
+      $result['is_valid'] = true;
+      $result['message']  = '';
+    }
+  }
+
+  return $result;
 }
