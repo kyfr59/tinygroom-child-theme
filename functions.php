@@ -24,24 +24,6 @@ function theme_enqueue_backend_styles()
 }
 
 
-// Add a button to download the letter/cerfa from the admin
-add_action('gform_entry_detail_sidebar_after', 'tinygroom_add_send_letter_button_in_admin', 10, 2);
-function tinygroom_add_send_letter_button_in_admin($form, $lead)
-{
-  if ( $form['id'] == 1 || $form['id'] == 24 ) {
-    $link = '<a download href="../admin937597_php/letter.php?id='.$lead['id'].'" class="button">Télécharger la lettre</a>';
-    $file = "letter";
-    $text = "la lettre";
-  } elseif ( $form['id'] == 18 || $form['id'] == 23 ) {
-    $file = "cerfa_ecj";
-    $text = "le CERFA";
-  }
-  if (strlen(trim($text))) {
-    echo '<div class="detail-view-print"><a download href="../admin937597_php/'.$file.'.php?id='.$lead['id'].'" class="button">Télécharger '.$text.'</a></div>';
-  }
-}
-
-
 // Replace the status value by a combo and change the status via Ajax (see js/backend.js)
 add_filter( 'gform_get_field_value', 'enable_select_status_on_form_entries', 10, 3 );
 function enable_select_status_on_form_entries( $value, $entry, $field ){
