@@ -111,3 +111,41 @@ function tinygroom_set_gender_field_required ( $result, $value, $form, $field ) 
 
   return $result;
 }
+
+
+/**
+ * Add the search order widget to the dashboard.
+ */
+add_action( 'wp_dashboard_setup', 'tinygroom_add_dashboard_widgets' );
+function tinygroom_add_dashboard_widgets() {
+  wp_add_dashboard_widget(
+    'tinygroom_search_order_widget',
+    'Rechercher une commande',
+    'tinygroom_display_search_order_widget'
+    );
+}
+
+function tinygroom_display_search_order_widget() {
+  echo '<form action="#" method="post" id="tinygroom-form-order">';
+  echo "<input type='text' name='id' />";
+  echo "<input type='submit'>";
+  echo '</form>';
+  echo '<div id="tinygroom-search-order-response" style="margin:10px;"></div>';
+}
+
+// Manage the Ajax call to change the status (see enable_select_status_on_form_entries() and js/backend.js)
+add_action( 'wp_ajax_tinygroom_search_order', 'tinygroom_search_order' );
+function tinygroom_search_order() {
+
+  // Retrive values pass throught Ajax
+  if (!$entry_id = $_POST['entry_id']) die("Aucune commande trouvée");
+
+  // Check for entry in database
+  $entry = GFFormsModel::get_lead($entry_id);
+
+  if (isset($entry['id']) && is_numeric($entry['id'])) {
+    die($admin_url = admin_url( 'admin.php?page=gf_entries&view=entry&id=' . $entry['form_id'] . '&lid='.$entry['id']));
+  } else {
+    die("Aucune commande trouvée");
+  }
+}

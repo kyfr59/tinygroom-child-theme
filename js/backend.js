@@ -38,4 +38,33 @@ jQuery(document).ready(function ($) {
     );
   });
 
+
+  /**
+   * Manage the search of an order (entry) from dashboard
+   * Call an Ajax query to change the form entry status
+   * @see functions.php::wp_ajax_tinygroom_search_order()
+   */
+  $('#tinygroom-form-order').submit(function () {
+    var form = $(this);
+    var entry_id = form.find('input[type="text"]').val();
+
+      // Call Ajax request
+      jQuery.post(
+        ajaxurl,
+        {
+            'action': 'tinygroom_search_order',
+            'entry_id': entry_id,
+        },
+        function(response){
+
+          var pattern = /^((http|https):\/\/)/;
+          if(pattern.test(response)) {
+            window.location.replace(response);
+          } else {
+            $('#tinygroom-search-order-response').html(response);
+          }
+        }
+      );
+    return false;
+  });
 });
